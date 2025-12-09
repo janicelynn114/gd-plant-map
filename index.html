@@ -79,11 +79,12 @@
         const Locate = (props) => <Icon {...props}><line x1="2" x2="5" y1="12" y2="12"/><line x1="19" x2="22" y1="12" y2="12"/><line x1="12" x2="12" y1="2" y2="5"/><line x1="12" x2="12" y1="19" y2="22"/><circle cx="12" cy="12" r="7"/></Icon>;
         const Navigation = (props) => <Icon {...props}><polygon points="3 11 22 2 13 21 11 13 3 11"/></Icon>;
 
-        // --- 圖片路徑處理 (已修正) ---
+        // --- 圖片路徑處理 ---
+        // 修正：不需要轉換 Google Drive，直接回傳本地路徑
         const getDisplayUrl = (url) => {
-            // 如果 url 已經是完整網址 (例如 placeholder)，直接回傳
-            if (url.startsWith('http')) return url;
-            // 否則回傳相對路徑
+            // 如果 url 為空或 undefined，回傳 placeholder
+            if (!url) return "https://placehold.co/600x400/e2e8f0/94a3b8?text=No+Image";
+            // 正常回傳網址
             return url;
         };
 
@@ -122,448 +123,48 @@
             );
         };
 
-        // --- 植物資料庫 (一條一行，方便編輯，修正路徑與副檔名) ---
+        // --- 植物資料庫 (一條一行，方便編輯) ---
         const PLANTS_DATA = [
-            { 
-              id: 1, 
-              name: "榕樹", 
-              aliases: "細葉榕、正榕", 
-              category: "tree", 
-              description: "常綠喬木，枝幹粗壯，氣根垂地，可逐漸形成支柱，是校門口的精神象徵。", 
-              features: "氣根、隱花果、白色乳汁、樹形寬廣、耐修剪", 
-              area: "校園多處", 
-              images: ["public/1.jpeg", "public/1-2.jpeg", "public/1-3.jpeg", "public/1-4.jpeg", "public/1-5.jpeg", "public/1-6.jpeg"], 
-              locations: [{ x: 35, y: 30 }, { x: 28, y: 30 }, { x: 23, y: 30 }, { x: 15, y: 32 }, { x: 10, y: 32 }, { x: 65, y: 78 }, { x: 71, y: 78 }, { x: 75, y: 70 }, { x: 45, y: 78 }, { x: 38, y: 78 }] 
-            },
-            { 
-              id: 2, 
-              name: "龍柏", 
-              aliases: "圓柏、繞龍柏", 
-              category: "tree", 
-              description: "常綠喬木，樹幹旋轉如龍抱柱而得名，葉片呈鱗片狀。", 
-              features: "樹形優美、全株具香氣、耐修剪", 
-              area: "關懷樓前、東校門外", 
-              images: ["public/2.jpeg", "public/2-1.jpeg", "public/2-3.jpeg"], 
-              locations: [{ x: 95, y: 65 }] 
-            },
-            { 
-              id: 3, 
-              name: "洋紫荊", 
-              aliases: "羊蹄甲", 
-              category: "tree", 
-              description: "常綠小喬木，葉片頂端裂開像羊蹄，春季開粉紅或紫紅色花。", 
-              features: "葉形像羊蹄、春季開花、花形似蝶", 
-              area: "東校門外", 
-              images: ["public/3.jpeg", "public/3-1.jpeg"], 
-              locations: [{ x: 95, y: 60 }] 
-            },
-            { 
-              id: 4, 
-              name: "阿勃勒", 
-              aliases: "黃金雨", 
-              category: "tree", 
-              description: "落葉喬木，花序垂吊，初夏盛開時如金雨傾瀉。", 
-              features: "長條形莢果、黃色花序", 
-              area: "東棟東側(後方)", 
-              images: ["public/4.jpeg", "public/4-2.jpeg"], 
-              locations: [{ x: 95, y: 45 }] 
-            },
-            { 
-              id: 5, 
-              name: "荔枝", 
-              aliases: "大荔", 
-              category: "tree", 
-              description: "常綠喬木，夏季結果，果皮鮮紅有鱗斑。", 
-              features: "夏季結果、果實可食", 
-              area: "東棟東側(後方)", 
-              images: ["public/5.jpeg", "public/5-2.jpeg"], 
-              locations: [{ x: 95, y: 40 }] 
-            },
-            { 
-              id: 6, 
-              name: "波羅蜜", 
-              aliases: "木波羅", 
-              category: "tree", 
-              description: "常綠喬木，果實巨大生於幹上，是熱帶果樹特色。", 
-              features: "果實巨大、幹生果實", 
-              area: "東棟東側(後方)", 
-              images: ["public/6.jpeg", "public/6-2.jpeg"], 
-              locations: [{ x: 91, y: 40 }] 
-            },
-            { 
-              id: 7, 
-              name: "麵包樹", 
-              aliases: "羅蜜樹", 
-              category: "tree", 
-              description: "葉片大而深裂，果實燒烤後味道像麵包。", 
-              features: "葉片大、雌雄同株", 
-              area: "東棟東側(後方)", 
-              images: ["public/7.jpeg", "public/7-2.jpeg"], 
-              locations: [{ x: 91, y: 35 }] 
-            },
-            { 
-              id: 8, 
-              name: "桂花", 
-              aliases: "木犀", 
-              category: "shrub", 
-              description: "常綠灌木，花香濃郁，常用於糕點或花茶。", 
-              features: "花香馥郁、耐修剪", 
-              area: "東棟生態池周邊", 
-              images: ["public/8.jpeg", "public/8-2.jpeg"], 
-              locations: [{ x: 80, y: 58 }, { x: 80, y: 53 }] 
-            },
-            { 
-              id: 9, 
-              name: "銳葉牽牛", 
-              aliases: "碗公花", 
-              category: "flower", 
-              description: "一年生藤本，花形似喇叭，晨開暮閉。", 
-              features: "攀爬性強、花色鮮豔", 
-              area: "東棟圍牆", 
-              images: ["public/9.jpeg", "public/9-2.jpeg"], 
-              locations: [{ x: 80, y: 15 }] 
-            },
-            { 
-              id: 10, 
-              name: "變葉木", 
-              aliases: "變色葉", 
-              category: "shrub", 
-              description: "常綠灌木，葉色豐富多變，觀賞價值高。", 
-              features: "葉色多彩、耐修剪", 
-              area: "東棟生態池、西門長頸鹿園", 
-              images: ["public/10.jpeg", "public/10-2.jpeg"], 
-              locations: [{ x: 75, y: 25 }] 
-            },
-            { 
-              id: 11, 
-              name: "紅仙丹花", 
-              aliases: "矮仙丹", 
-              category: "shrub", 
-              description: "花朵小而密集成球狀，花期長。", 
-              features: "花球狀、吸引蝴蝶", 
-              area: "東棟花圃", 
-              images: ["public/11.jpeg", "public/11-2.jpeg"], 
-              locations: [{ x: 75, y: 30 }] 
-            },
-            { 
-              id: 12, 
-              name: "輪傘草", 
-              aliases: "風車草", 
-              category: "flower", 
-              description: "莖頂苞片放射狀排列，如小雨傘，多生於水邊。", 
-              features: "挺水植物、喜濕潤", 
-              area: "東棟生態池邊", 
-              images: ["public/12.jpeg", "public/12-2.jpeg"], 
-              locations: [{ x: 72, y: 28 }] 
-            },
-            { 
-              id: 13, 
-              name: "羽裂蔓綠絨", 
-              aliases: "小天使", 
-              category: "flower", 
-              description: "葉片巨大且深裂如羽毛，是觀葉植物。", 
-              features: "耐陰性強、氣生根", 
-              area: "東棟生態池邊", 
-              images: ["public/13.jpeg", "public/13-2.jpeg"], 
-              locations: [{ x: 65, y: 22 }] 
-            },
-            { 
-              id: 14, 
-              name: "野薑花", 
-              aliases: "蝴蝶花", 
-              category: "flower", 
-              description: "多年生草本，白花似飛舞蝴蝶，香氣濃郁。", 
-              features: "花香濃郁、地下莖塊狀", 
-              area: "東棟生態池邊", 
-              images: ["public/14.jpeg", "public/14-2.jpeg"], 
-              locations: [{ x: 68, y: 18 }] 
-            },
-            { 
-              id: 15, 
-              name: "黑板樹", 
-              aliases: "乳木", 
-              category: "tree", 
-              description: "樹幹筆直，可當黑板木材使用。", 
-              features: "掌狀複葉、乳汁有毒", 
-              area: "關東樓前", 
-              images: [], // 暫無照片
-              locations: [{ x: 60, y: 25 }] 
-            },
-            { 
-              id: 16, 
-              name: "四季橘", 
-              aliases: "四季桔", 
-              category: "tree", 
-              description: "果實金黃討喜，常年可結果。", 
-              features: "果實圓形、葉有香氣", 
-              area: "關懷樓前", 
-              images: [], // 暫無照片
-              locations: [{ x: 31, y: 18 }] 
-            },
-            { 
-              id: 17, 
-              name: "檸檬", 
-              aliases: "西檸檬", 
-              category: "tree", 
-              description: "常綠小喬木，果汁酸，多用於料理。", 
-              features: "葉柄具狹翼、枝條有刺", 
-              area: "關懷樓前", 
-              images: ["public/17.jpeg", "public/17-2.jpeg"], 
-              locations: [{ x: 34, y: 18 }] 
-            },
-            { 
-              id: 18, 
-              name: "枇杷", 
-              aliases: "盧橘", 
-              category: "tree", 
-              description: "常綠小喬木，果實橙黃，冬春成熟。", 
-              features: "葉背絨毛、果實可食", 
-              area: "關懷樓前", 
-              images: ["public/18.jpeg", "public/18-2.jpeg", "public/18-3.jpeg", "public/18-4.jpeg"], 
-              locations: [{ x: 28, y: 18 }, { x: 30, y: 78 }] 
-            },
-            { 
-              id: 19, 
-              name: "珊瑚刺桐", 
-              aliases: "龍牙花", 
-              category: "tree", 
-              description: "花紅似冠，枝條有刺，是觀賞樹種。", 
-              features: "三出複葉、有刺", 
-              area: "關懷樓前", 
-              images: ["public/19.jpeg", "public/19-2.jpeg", "public/19-3.jpeg"], 
-              locations: [{ x: 25, y: 18 }] 
-            },
-            { 
-              id: 20, 
-              name: "福木", 
-              aliases: "金錢樹", 
-              category: "tree", 
-              description: "葉片厚實具光澤，常視為吉祥植物。", 
-              features: "耐旱耐鹽、乳汁有毒", 
-              area: "關懷樓前", 
-              images: ["public/20.jpeg", "public/20-2.jpeg"], 
-              locations: [{ x: 18, y: 18 }] 
-            },
-            { 
-              id: 21, 
-              name: "黃椰子", 
-              aliases: "散尾葵", 
-              category: "tree", 
-              description: "葉柄金黃，羽狀複葉，具南洋風情。", 
-              features: "樹姿優美、耐旱", 
-              area: "關懷樓前", 
-              images: ["public/21.jpeg", "public/21-2.jpeg"], 
-              locations: [{ x: 15, y: 18 }] 
-            },
-            { 
-              id: 22, 
-              name: "棍棒椰子", 
-              aliases: "柏修椰林子", 
-              category: "tree", 
-              description: "莖單桿直立，幹上環狀紋明顯，狀若棍棒。", 
-              features: "觀賞用：庭園樹、盆栽觀賞用", 
-              area: "關懷樓前", 
-              images: ["public/22.jpeg", "public/22-2.jpeg", "public/22-3.jpeg"], 
-              locations: [{ x: 13, y: 20 }] 
-            },
-            { 
-              id: 23, 
-              name: "小葉欖仁", 
-              aliases: "雨傘樹", 
-              category: "tree", 
-              description: "枝葉層層排列如雨傘，層次分明。", 
-              features: "樹形優雅、冬季落葉", 
-              area: "關懷樓靠西側", 
-              images: ["public/23.jpeg", "public/23-2.jpeg"], 
-              locations: [{ x: 13, y: 23 }] 
-            },
-            { 
-              id: 24, 
-              name: "柳樹", 
-              aliases: "水柳", 
-              category: "tree", 
-              description: "枝條細長垂下，姿態柔美，常見於水岸。", 
-              features: "柔條披拂、耐濕", 
-              area: "生態池邊", 
-              images: ["public/24.jpeg", "public/24-2.jpeg", "public/24-3.jpeg"], 
-              locations: [{ x: 20, y: 25 }] 
-            },
-            { 
-              id: 25, 
-              name: "朱槿", 
-              aliases: "扶桑花", 
-              category: "shrub", 
-              description: "常綠灌木，花大鮮豔，每朵僅開一日。", 
-              features: "鄉土植物、開花期長", 
-              area: "關懷樓前", 
-              images: ["public/25.jpeg", "public/25-2.jpeg", "public/25-3.jpeg", "public/25-4.jpeg", "public/25-5.jpeg"], 
-              locations: [{ x: 20, y: 28 }] 
-            },
-            { 
-              id: 26, 
-              name: "茄苳", 
-              aliases: "重陽木", 
-              category: "tree", 
-              description: "本土原生樹種，樹冠濃密，常供鳥類棲息。", 
-              features: "三出複葉、吸引鳥類", 
-              area: "長頸鹿園", 
-              images: ["public/26.jpeg", "public/26-2.jpeg"], 
-              locations: [{ x: 8, y: 55 }] 
-            },
-            { 
-              id: 27, 
-              name: "梅花", 
-              aliases: "春梅", 
-              category: "tree", 
-              description: "冬季先花後葉，是象徵堅忍的花卉。", 
-              features: "先花後葉、香氣清雅", 
-              area: "長頸鹿園", 
-              images: ["public/27.jpeg", "public/27-2.jpeg"], 
-              locations: [{ x: 12, y: 55 }] 
-            },
-            { 
-              id: 28, 
-              name: "印度橡膠", 
-              aliases: "印度榕", 
-              category: "tree", 
-              description: "葉片厚大，折斷有乳汁，可製橡膠。", 
-              features: "氣生根、乳汁", 
-              area: "關愛樓幼兒園前", 
-              images: ["public/28.jpeg", "public/28-2.jpeg", "public/28-3.jpeg", "public/28-4.jpeg"], 
-              locations: [{ x: 10, y: 75 }] 
-            },
-            { 
-              id: 29, 
-              name: "竹柏", 
-              aliases: "山杉", 
-              category: "tree", 
-              description: "葉片似竹葉但對生，木質堅硬。", 
-              features: "裸子植物、葉具香氣", 
-              area: "關愛樓幼兒園", 
-              images: ["public/29.jpeg", "public/29-2.jpeg", "public/29-3.jpeg"], 
-              locations: [{ x: 20, y: 78 }] 
-            },
-            { 
-              id: 30, 
-              name: "楊梅", 
-              aliases: "樹梅", 
-              category: "tree", 
-              description: "夏季結果，果實紅紫色，酸甜可食。", 
-              features: "雌雄異株、果實可食", 
-              area: "關愛樓中間樓梯前", 
-              images: ["public/30.jpeg", "public/30-2.jpeg"], 
-              locations: [{ x: 35, y: 78 }] 
-            },
-            { 
-              id: 31, 
-              name: "假連翹", 
-              aliases: "黃金花", 
-              category: "shrub", 
-              description: "春季花滿枝，花黃似喇叭。", 
-              features: "花形似喇叭、耐旱", 
-              area: "東棟生態池邊", 
-              images: ["public/31.jpeg", "public/31-2.jpeg"], 
-              locations: [{ x: 68, y: 30 }] 
-            },
-            { 
-              id: 32, 
-              name: "水梅", 
-              aliases: "水丁香", 
-              category: "shrub", 
-              description: "常綠灌木，白色花成簇，具淡雅香味。", 
-              features: "耐濕、觀賞性", 
-              area: "關懷樓前", 
-              images: [], 
-              locations: [{ x: 22, y: 18 }] 
-            },
-            { 
-              id: 33, 
-              name: "森氏紅淡比", 
-              aliases: "台灣紅淡比", 
-              category: "tree", 
-              description: "台灣原生稀有樹種，葉緣略帶紅色。", 
-              features: "原生植物、葉緣紅", 
-              area: "長頸鹿園", 
-              images: ["public/33.jpeg", "public/33-2.jpeg"], 
-              locations: [{ x: 12, y: 50 }] 
-            },
-            { 
-              id: 34, 
-              name: "尤加利", 
-              aliases: "桉樹", 
-              category: "tree", 
-              description: "葉片含精油，氣味清新，是無尾熊主食。", 
-              features: "芳香精油、耐旱", 
-              area: "西校門圍牆外", 
-              images: ["public/34.jpeg", "public/34-2.jpeg"], 
-              locations: [{ x:4 , y: 40 }] 
-            },
-            { 
-              id: 35, 
-              name: "山茶", 
-              aliases: "茶花", 
-              category: "shrub", 
-              description: "冬季開花，花色多元，是常見觀賞植物。", 
-              features: "冬季開花、觀賞性高", 
-              area: "關懷樓前靠西側", 
-              images: ["public/35.jpeg", "public/35-2.jpeg"], 
-              locations: [{ x: 13, y: 28 }] 
-            },
-            { 
-              id: 36, 
-              name: "黃鐘樹", 
-              aliases: "黃金鐘", 
-              category: "tree", 
-              description: "花形似風鈴，春季盛開時極為搶眼。", 
-              features: "花形風鈴、春季開花", 
-              area: "東棟生態池旁", 
-              images: ["public/36.jpeg", "public/36-2.jpeg"], 
-              locations: [{ x: 72, y: 26 }] 
-            },
-            { 
-              id: 37, 
-              name: "蒜香藤", 
-              aliases: "香藤", 
-              category: "flower", 
-              description: "常綠藤本，葉片搓揉有蒜味。", 
-              features: "紫色花、攀爬性強", 
-              area: "東棟二樓花圃", 
-              images: [], 
-              locations: [{ x: 80, y: 30 }] 
-            },
-            { 
-              id: 38, 
-              name: "櫻花樹", 
-              aliases: "櫻花", 
-              category: "tree", 
-              description: "春季開粉紅色或白色花，是常見賞花樹種。", 
-              features: "春季盛開、花落如雨", 
-              area: "關愛樓後方靠東側", 
-              images: [], 
-              locations: [{ x: 78, y: 95 }] 
-            },
-            { 
-              id: 39, 
-              name: "金桔", 
-              aliases: "金桔子", 
-              category: "shrub", 
-              description: "常綠灌木，果實橘黃，可作蜜餞或飲品。", 
-              features: "果實可食、耐修剪", 
-              area: "關懷樓前", 
-              images: ["public/39.jpeg", "public/39-2.jpeg"], 
-              locations: [{ x: 32, y: 25 }] 
-            },
-            { 
-              id: 40, 
-              name: "龍船花", 
-              aliases: "山丹花", 
-              category: "flower", 
-              description: "臺灣原生種，每年三月到十月開花。", 
-              features: "蝴蝶的蜜源植物", 
-              area: "關懷樓前", 
-              images: ["public/40.jpeg", "public/40-2.jpeg", "public/40-3.jpeg"], 
-              locations: [{ x: 32, y: 25 }] 
-            }
+            { id: 1, name: "榕樹", aliases: "細葉榕、正榕", category: "tree", description: "常綠喬木，枝幹粗壯，氣根垂地，可逐漸形成支柱，是校門口的精神象徵。", features: "氣根、隱花果、白色乳汁、樹形寬廣、耐修剪", area: "校園多處", images: ["public/1.jpeg", "public/1-2.jpeg", "public/1-3.jpeg", "public/1-4.jpeg", "public/1-5.jpeg", "public/1-6.jpeg"], locations: [{ x: 35, y: 30 }, { x: 28, y: 30 }, { x: 23, y: 30 }, { x: 15, y: 32 }, { x: 10, y: 32 }, { x: 65, y: 78 }, { x: 71, y: 78 }, { x: 75, y: 70 }, { x: 45, y: 78 }, { x: 38, y: 78 }] },
+            { id: 2, name: "龍柏", aliases: "圓柏、繞龍柏", category: "tree", description: "常綠喬木，樹幹旋轉如龍抱柱而得名，葉片呈鱗片狀。", features: "樹形優美、全株具香氣、耐修剪", area: "關懷樓前、東校門外", images: ["public/2.jpeg", "public/2-1.jpeg", "public/2-3.jpeg"], locations: [{ x: 95, y: 65 }] },
+            { id: 3, name: "洋紫荊", aliases: "羊蹄甲", category: "tree", description: "常綠小喬木，葉片頂端裂開像羊蹄，春季開粉紅或紫紅色花。", features: "葉形像羊蹄、春季開花、花形似蝶", area: "東校門外", images: ["public/3.jpeg", "public/3-1.jpeg"], locations: [{ x: 95, y: 60 }] },
+            { id: 4, name: "阿勃勒", aliases: "黃金雨", category: "tree", description: "落葉喬木，花序垂吊，初夏盛開時如金雨傾瀉。", features: "長條形莢果、黃色花序", area: "東棟東側(後方)", images: ["public/4.jpeg", "public/4-2.jpeg"], locations: [{ x: 95, y: 45 }] },
+            { id: 5, name: "荔枝", aliases: "大荔", category: "tree", description: "常綠喬木，夏季結果，果皮鮮紅有鱗斑。", features: "夏季結果、果實可食", area: "東棟東側(後方)", images: ["public/5.jpeg", "public/5-2.jpeg"], locations: [{ x: 95, y: 40 }] },
+            { id: 6, name: "波羅蜜", aliases: "木波羅", category: "tree", description: "常綠喬木，果實巨大生於幹上，是熱帶果樹特色。", features: "果實巨大、幹生果實", area: "東棟東側(後方)", images: ["public/6.jpeg", "public/6-2.jpeg"], locations: [{ x: 91, y: 40 }] },
+            { id: 7, name: "麵包樹", aliases: "羅蜜樹", category: "tree", description: "葉片大而深裂，果實燒烤後味道像麵包。", features: "葉片大、雌雄同株", area: "東棟東側(後方)", images: ["public/7.jpeg", "public/7-2.jpeg"], locations: [{ x: 91, y: 35 }] },
+            { id: 8, name: "桂花", aliases: "木犀", category: "shrub", description: "常綠灌木，花香濃郁，常用於糕點或花茶。", features: "花香馥郁、耐修剪", area: "東棟生態池周邊", images: ["public/8.jpeg", "public/8-2.jpeg"], locations: [{ x: 80, y: 58 }, { x: 80, y: 53 }] },
+            { id: 9, name: "銳葉牽牛", aliases: "碗公花", category: "flower", description: "一年生藤本，花形似喇叭，晨開暮閉。", features: "攀爬性強、花色鮮豔", area: "東棟圍牆", images: ["public/9.jpeg", "public/9-2.jpeg"], locations: [{ x: 80, y: 15 }] },
+            { id: 10, name: "變葉木", aliases: "變色葉", category: "shrub", description: "常綠灌木，葉色豐富多變，觀賞價值高。", features: "葉色多彩、耐修剪", area: "東棟生態池、西門長頸鹿園", images: ["public/10.jpeg", "public/10-2.jpeg"], locations: [{ x: 75, y: 25 }] },
+            { id: 11, name: "紅仙丹花", aliases: "矮仙丹", category: "shrub", description: "花朵小而密集成球狀，花期長。", features: "花球狀、吸引蝴蝶", area: "東棟花圃", images: ["public/11.jpeg", "public/11-2.jpeg"], locations: [{ x: 75, y: 30 }] },
+            { id: 12, name: "輪傘草", aliases: "風車草", category: "flower", description: "莖頂苞片放射狀排列，如小雨傘，多生於水邊。", features: "挺水植物、喜濕潤", area: "東棟生態池邊", images: ["public/12.jpeg", "public/12-2.jpeg"], locations: [{ x: 70, y: 28 }] },
+            { id: 13, name: "羽裂蔓綠絨", aliases: "小天使", category: "flower", description: "葉片巨大且深裂如羽毛，是觀葉植物。", features: "耐陰性強、氣生根", area: "東棟生態池邊", images: ["public/13.jpeg", "public/13-2.jpeg"], locations: [{ x: 65, y: 22 }] },
+            { id: 14, name: "野薑花", aliases: "蝴蝶花", category: "flower", description: "多年生草本，白花似飛舞蝴蝶，香氣濃郁。", features: "花香濃郁、地下莖塊狀", area: "東棟生態池邊", images: ["public/14.jpeg", "public/14-2.jpeg"], locations: [{ x: 68, y: 18 }] },
+            { id: 15, name: "黑板樹", aliases: "乳木", category: "tree", description: "樹幹筆直，可當黑板木材使用。", features: "掌狀複葉、乳汁有毒", area: "關東樓前", images: ["public/IMG_8132.jpeg"], locations: [{ x: 60, y: 25 }] },
+            { id: 16, name: "四季橘", aliases: "四季桔", category: "tree", description: "果實金黃討喜，常年可結果。", features: "果實圓形、葉有香氣", area: "關懷樓前", images: [], locations: [{ x: 31, y: 18 }] },
+            { id: 17, name: "檸檬", aliases: "西檸檬", category: "tree", description: "常綠小喬木，果汁酸，多用於料理。", features: "葉柄具狹翼、枝條有刺", area: "關懷樓前", images: ["public/17.jpeg", "public/17-2.jpeg"], locations: [{ x: 34, y: 18 }] },
+            { id: 18, name: "枇杷", aliases: "盧橘", category: "tree", description: "常綠小喬木，果實橙黃，冬春成熟。", features: "葉背絨毛、果實可食", area: "關懷樓前", images: ["public/18.jpeg", "public/18-2.jpeg", "public/18-3.jpeg", "public/18-4.jpeg"], locations: [{ x: 28, y: 18 }, { x: 30, y: 78 }] },
+            { id: 19, name: "珊瑚刺桐", aliases: "龍牙花", category: "tree", description: "花紅似冠，枝條有刺，是觀賞樹種。", features: "三出複葉、有刺", area: "關懷樓前", images: ["public/19.jpeg", "public/19-2.jpeg", "public/19-3.jpeg"], locations: [{ x: 25, y: 18 }] },
+            { id: 20, name: "福木", aliases: "金錢樹", category: "tree", description: "葉片厚實具光澤，常視為吉祥植物。", features: "耐旱耐鹽、乳汁有毒", area: "關懷樓前", images: ["public/20.jpeg", "public/20-2.jpeg"], locations: [{ x: 18, y: 18 }] },
+            { id: 21, name: "黃椰子", aliases: "散尾葵", category: "tree", description: "葉柄金黃，羽狀複葉，具南洋風情。", features: "樹姿優美、耐旱", area: "關懷樓前", images: ["public/21.jpeg", "public/21-2.jpeg"], locations: [{ x: 15, y: 18 }] },
+            { id: 22, name: "棍棒椰子", aliases: "德利椰子", category: "tree", description: "莖單桿直立，幹上環狀紋明顯，狀若棍棒", features: "觀賞用：庭園樹、盆栽觀賞用", area: "關懷樓前", images: ["public/22.jpeg", "public/22-3.jpeg"], locations: [{ x: 13, y: 20 }] },
+            { id: 23, name: "小葉欖仁", aliases: "雨傘樹", category: "tree", description: "枝葉層層排列如雨傘，層次分明。", features: "樹形優雅、冬季落葉", area: "關懷樓靠西側", images: ["public/23.jpeg", "public/23-2.jpeg"], locations: [{ x: 13, y: 23 }] },
+            { id: 24, name: "柳樹", aliases: "水柳", category: "tree", description: "枝條細長垂下，姿態柔美，常見於水岸。", features: "柔條披拂、耐濕", area: "生態池邊", images: ["public/24.jpeg", "public/24-2.jpeg", "public/24-3.jpeg"], locations: [{ x: 20, y: 25 }] },
+            { id: 25, name: "朱槿", aliases: "扶桑花", category: "shrub", description: "常綠灌木，花大鮮豔，每朵僅開一日。", features: "鄉土植物、開花期長", area: "關懷樓前", images: ["public/25.jpeg", "public/25-2.jpeg", "public/25-3.jpeg", "public/25-4.jpeg", "public/25-5.jpeg"], locations: [{ x: 20, y: 28 }] },
+            { id: 26, name: "茄苳", aliases: "重陽木", category: "tree", description: "本土原生樹種，樹冠濃密，常供鳥類棲息。", features: "三出複葉、吸引鳥類", area: "長頸鹿園", images: ["public/26.jpeg", "public/26-2.jpeg"], locations: [{ x: 8, y: 53 }] },
+            { id: 27, name: "梅花", aliases: "春梅", category: "tree", description: "冬季先花後葉，是象徵堅忍的花卉。", features: "先花後葉、香氣清雅", area: "長頸鹿園", images: ["public/27.jpeg", "public/27-2.jpeg"], locations: [{ x: 12, y: 55 }] },
+            { id: 28, name: "印度橡膠", aliases: "印度榕", category: "tree", description: "葉片厚大，折斷有乳汁，可製橡膠。", features: "氣生根、乳汁", area: "關愛樓幼兒園前", images: ["public/28.jpeg", "public/28-2.jpeg", "public/28-3.jpeg", "public/28-4.jpeg"], locations: [{ x: 10, y: 75 }] },
+            { id: 29, name: "竹柏", aliases: "山杉", category: "tree", description: "葉片似竹葉但對生，木質堅硬。", features: "裸子植物、葉具香氣", area: "關愛樓幼兒園", images: ["public/29.jpeg", "public/29-2.jpeg", "public/29-3.jpeg"], locations: [{ x: 20, y: 78 }] },
+            { id: 30, name: "楊梅", aliases: "樹梅", category: "tree", description: "夏季結果，果實紅紫色，酸甜可食。", features: "雌雄異株、果實可食", area: "關愛樓中間樓梯前", images: ["public/30.jpeg", "public/30-2.jpeg"], locations: [{ x: 35, y: 78 }] },
+            { id: 31, name: "假連翹", aliases: "黃金花", category: "shrub", description: "春季花滿枝，花黃似喇叭。", features: "花形似喇叭、耐旱", area: "東棟生態池邊", images: ["public/31.jpeg", "public/31-2.jpeg"], locations: [{ x: 68, y: 30 }] },
+            { id: 32, name: "水梅", aliases: "水丁香", category: "shrub", description: "常綠灌木，白色花成簇，具淡雅香味。", features: "耐濕、觀賞性", area: "關懷樓前", images: [], locations: [{ x: 22, y: 18 }] },
+            { id: 33, name: "森氏紅淡比", aliases: "台灣紅淡比", category: "tree", description: "台灣原生稀有樹種，葉緣略帶紅色。", features: "原生植物、葉緣紅", area: "長頸鹿園", images: ["public/33.jpeg", "public/33-2.jpeg"], locations: [{ x: 12, y: 50 }] },
+            { id: 34, name: "尤加利", aliases: "桉樹", category: "tree", description: "葉片含精油，氣味清新，是無尾熊主食。", features: "芳香精油、耐旱", area: "西校門圍牆外", images: ["public/34.jpeg", "public/34-2.jpeg"], locations: [{ x:4 , y: 40 }] },
+            { id: 35, name: "山茶", aliases: "茶花", category: "shrub", description: "冬季開花，花色多元，是常見觀賞植物。", features: "冬季開花、觀賞性高", area: "關懷樓前靠西側", images: ["public/35.jpeg", "public/35-2.jpeg", "public/35-3.jpeg"], locations: [{ x: 13, y: 28 }] },
+            { id: 36, name: "黃鐘樹", aliases: "黃金鐘", category: "tree", description: "花形似風鈴，春季盛開時極為搶眼。", features: "花形風鈴、春季開花", area: "東棟生態池旁", images: ["public/36.jpeg", "public/36-2.jpeg"], locations: [{ x: 72, y: 26 }] },
+            { id: 37, name: "蒜香藤", aliases: "香藤", category: "flower", description: "常綠藤本，葉片搓揉有蒜味。", features: "紫色花、攀爬性強", area: "東棟二樓花圃", images: [], locations: [{ x: 80, y: 30 }] },
+            { id: 38, name: "櫻花樹", aliases: "櫻花", category: "tree", description: "春季開粉紅色或白色花，是常見賞花樹種。", features: "春季盛開、花落如雨", area: "關愛樓後方靠東側", images: [], locations: [{ x: 78, y: 95 }] },
+            { id: 39, name: "金桔", aliases: "金桔子", category: "shrub", description: "常綠灌木，果實橘黃，可作蜜餞或飲品。", features: "果實可食、耐修剪", area: "關懷樓前", images: ["public/39.jpeg", "public/39-2.jpeg"], locations: [{ x: 20, y: 24 }] },
+            { id: 40, name: "龍船花", aliases: "發瘋花(老一輩的人認為如果家中種了這種植物就會有人發瘋)", category: "flower", description: "臺灣原生種，每年三月到十月開花。", features: "蝴蝶的蜜源植物", area: "關懷樓前", images: ["public/40.jpeg", "public/40-2.jpeg", "public/40-3.jpeg"], locations: [{ x: 32, y: 25 }] }
         ];
 
         // --- 校準參數 (Calibration) ---
